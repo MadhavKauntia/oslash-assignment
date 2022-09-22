@@ -10,6 +10,7 @@ import java.util.Date;
 @Builder
 @Getter
 @Setter
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FileMetadata {
     private String id;

@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FilesResponse {
     private List<FileMetadata> items;
