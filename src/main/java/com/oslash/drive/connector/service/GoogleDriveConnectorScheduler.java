@@ -35,14 +35,11 @@ public class GoogleDriveConnectorScheduler {
     @Value("${events.threshold}")
     private String eventsThreshold;
 
-    @Value("${output.folder}")
-    String outputFolder;
-
     @Autowired
     private FilesListAsyncHelper filesListAsyncHelper;
 
     @Autowired
-    private FileDownloadAsyncHelper fileDownloadAsyncHelper;
+    private ProcessEventsHelper processEventsHelper;
 
     @Scheduled(cron = "#{@getCronExpression}", zone = Constants.UTC)
     public void checkAndUpdateChanges() throws ExecutionException, InterruptedException {
@@ -51,13 +48,11 @@ public class GoogleDriveConnectorScheduler {
         String lastCheckTime = getLastCheckTime();
         StoreFilesMetadata.lastCheckTime = new Date();
         FilesResponse filesResponse = filesListAsyncHelper.getFiles(String.format("'%s' in parents and createdTime > '%s'", folderId, lastCheckTime)).get();
-        if(!CollectionUtils.isEmpty(filesResponse.getFiles())) {
-            List<FileMetadata> newFiles = filesResponse.getFiles().stream().filter(file -> !StoreFilesMetadata.storedFiles.contains(file.getId())).toList();
-            StoreFilesMetadata.filesInQueue.addAll(newFiles);
-            if(StoreFilesMetadata.filesInQueue.size() >= (eventsThreshold == null ? 10 : Integer.parseInt(eventsThreshold))) {
-                processEventsAndClearQueue();
-            }
-        }
+        List<FileMetadata> newFiles = filesResponse.getFiles().stream().filter(file -> !StoreFilesMetadata.storedFiles.contains(file.getId())).toList();
+        newFiles.forEach(file -> {
+            StoreFilesMetadata.filesInQueue.add(file);
+            if(StoreFilesMetadata.filesInQueue.size() == Integer.parseInt(eventsThreshold)) processEventsHelper.processEvents();
+        });
         logger.info("Successfully completed job within {}ms", System.currentTimeMillis() - startTime);
     }
 
@@ -67,18 +62,6 @@ public class GoogleDriveConnectorScheduler {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return StringUtils.replaceChars(sdf.format(calendar.getTime()), ' ', 'T');
-    }
-
-    private void processEventsAndClearQueue() {
-        for(List<FileMetadata> filesBatch : Lists.partition(StoreFilesMetadata.filesInQueue, Integer.parseInt(batchSize))) {
-            List<CompletableFuture<Void>> downloadFutures = new ArrayList<>();
-            filesBatch.forEach(file -> {
-                StoreFilesMetadata.storedFiles.add(file.getId());
-                downloadFutures.add(fileDownloadAsyncHelper.downloadFile(file.getId(), file.getOriginalFilename(), file.getMimeType(), StringUtils.join(outputFolder, folderId, "/")));
-            });
-            downloadFutures.forEach(CompletableFuture::join);
-        }
-        StoreFilesMetadata.filesInQueue = new ArrayList<>();
     }
 
 }

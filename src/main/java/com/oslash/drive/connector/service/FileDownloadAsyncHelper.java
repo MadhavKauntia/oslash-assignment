@@ -36,8 +36,7 @@ public class FileDownloadAsyncHelper {
             Map<String, Object> headerMap = new HashMap<>();
             headerMap.put(Constants.HEADER_ACCEPT, fileMimeType);
             Response response = googleDriveClient.downloadFile(URI.create(Constants.GOOGLE_DRIVE_BASE_URI), headerMap, fileId, apiKey);
-            new File(downloadPath).mkdir();
-            try(OutputStream os = new FileOutputStream(StringUtils.join(downloadPath, fileTitle))) {
+            try(OutputStream os = new FileOutputStream(StringUtils.join(downloadPath, "/", fileTitle))) {
                 response.body().asInputStream().transferTo(os);
                 os.flush();
                 logger.info("Successfully downloaded file: {} to location: {} within {}ms", fileTitle, downloadPath, System.currentTimeMillis() - startTime);
