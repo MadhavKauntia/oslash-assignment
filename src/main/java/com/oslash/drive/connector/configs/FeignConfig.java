@@ -26,7 +26,7 @@ public class FeignConfig {
         return buildClient(
                 GoogleDriveClient.class,
                 1000,
-                5000,
+                10000,
                 500,
                 2000,
                 3
