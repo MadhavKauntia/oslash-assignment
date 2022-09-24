@@ -17,12 +17,10 @@ public class FileMetadata {
     private String webContentLink;
     private String iconLink;
     private String thumbnailLink;
-    private String title;
     private String mimeType;
-    private Date createdDate;
-    private Date modifiedDate;
-    private String downloadUrl;
-    private String originalFileName;
+    private Date createdTime;
+    private Date modifiedTime;
+    private String originalFilename;
     private String fileExtension;
-    private String fileSize;
+    private String size;
 }

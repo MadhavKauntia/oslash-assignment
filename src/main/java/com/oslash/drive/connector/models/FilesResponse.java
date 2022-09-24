@@ -13,5 +13,5 @@ import java.util.List;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FilesResponse {
-    private List<FileMetadata> items;
+    private List<FileMetadata> files;
 }

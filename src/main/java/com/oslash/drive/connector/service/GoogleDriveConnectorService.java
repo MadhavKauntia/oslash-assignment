@@ -46,9 +46,9 @@ public class GoogleDriveConnectorService implements InitializingBean {
         } catch (NumberFormatException e) {
             batchSize = 10;
         }
-        for(List<FileMetadata> filesBatch : Lists.partition(files.getItems(), batchSize)) {
+        for(List<FileMetadata> filesBatch : Lists.partition(files.getFiles(), batchSize)) {
             List<CompletableFuture<Void>> parallelDownloads = new ArrayList<>();
-            filesBatch.forEach(file -> parallelDownloads.add(fileDownloadAsyncHelper.downloadFile(file.getId(), file.getTitle(), file.getMimeType(), StringUtils.join(outputFolder, folderId, "/"))));
+            filesBatch.forEach(file -> parallelDownloads.add(fileDownloadAsyncHelper.downloadFile(file.getId(), file.getOriginalFilename(), file.getMimeType(), StringUtils.join(outputFolder, folderId, "/"))));
             parallelDownloads.forEach(CompletableFuture::join);
         }
 

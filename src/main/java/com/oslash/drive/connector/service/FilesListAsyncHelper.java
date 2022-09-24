@@ -4,6 +4,7 @@ import com.oslash.drive.connector.clients.GoogleDriveClient;
 import com.oslash.drive.connector.commons.Constants;
 import com.oslash.drive.connector.models.FilesResponse;
 import feign.FeignException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class FilesListAsyncHelper {
         long startTime = System.currentTimeMillis();
         FilesResponse response = null;
         try {
-            response = googleDriveClient.getFilesInFolder(URI.create(Constants.GOOGLE_DRIVE_BASE_URI), folderId, apiKey);
+            response = googleDriveClient.getFilesInFolder(URI.create(Constants.GOOGLE_DRIVE_BASE_URI), String.format("'%s' in parents", folderId), apiKey);
             logger.info("Successfully fetched files for folderId: {} within {} ms", folderId, System.currentTimeMillis() - startTime);
         } catch (FeignException e) {
             logger.error("Exception occurred while fetching response from Google Drive API: {}", e.getMessage());
