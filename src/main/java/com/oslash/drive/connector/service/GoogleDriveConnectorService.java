@@ -20,7 +20,7 @@ public class GoogleDriveConnectorService implements InitializingBean {
 
     Logger logger = LoggerFactory.getLogger(GoogleDriveConnectorService.class);
 
-    @Value("${GOOGLE_DRIVE_FOLDER_ID}")
+    @Value("${google.drive.folder.id}")
     private String folderId;
 
     @Value("${output.folder}")

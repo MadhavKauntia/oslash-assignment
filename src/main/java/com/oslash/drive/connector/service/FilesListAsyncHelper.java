@@ -19,7 +19,7 @@ public class FilesListAsyncHelper {
 
     Logger logger = LoggerFactory.getLogger(FilesListAsyncHelper.class);
 
-    @Value("${GOOGLE_API_KEY}")
+    @Value("${google.api.key}")
     private String apiKey;
 
     @Autowired

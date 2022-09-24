@@ -23,7 +23,7 @@ public class FileDownloadAsyncHelper {
 
     Logger logger = LoggerFactory.getLogger(FileDownloadAsyncHelper.class);
 
-    @Value("${GOOGLE_API_KEY}")
+    @Value("${google.api.key}")
     private String apiKey;
 
     @Autowired
