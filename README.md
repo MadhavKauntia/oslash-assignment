@@ -29,6 +29,20 @@ Problem Statement - https://www.notion.so/OSlash-Integration-Engineering-Assignm
 
 ## Results
 
+## Steps to Run
+
+- Clone the repo
+- Add/update the following properties in `application.json`
+```properties
+google.api.key=
+google.drive.folder.id=
+output.folder=
+max.concurrency.batch.size=10
+periodic.check.time.in.mins=5
+events.threshold=10
+```
+- The Google Drive folder ID can be found in the URL on opening a Drive Folder.
+
 ### Code Coverage
 
 The overall code coverage is 80%.
