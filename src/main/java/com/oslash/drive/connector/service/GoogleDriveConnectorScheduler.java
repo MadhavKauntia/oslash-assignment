@@ -1,6 +1,5 @@
 package com.oslash.drive.connector.service;
 
-import com.google.common.collect.Lists;
 import com.oslash.drive.connector.commons.Constants;
 import com.oslash.drive.connector.models.FileMetadata;
 import com.oslash.drive.connector.models.FilesResponse;
@@ -12,19 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Service
 public class GoogleDriveConnectorScheduler {
 
     Logger logger = LoggerFactory.getLogger(GoogleDriveConnectorService.class);
-
-    static List<FileMetadata> newFiles = new ArrayList<>();
 
     @Value("${google.drive.folder.id}")
     private String folderId;
@@ -65,7 +60,7 @@ public class GoogleDriveConnectorScheduler {
     private String getLastCheckTime() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(StoreFilesMetadata.lastCheckTime);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return StringUtils.replaceChars(sdf.format(calendar.getTime()), ' ', 'T');
     }

@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class GoogleDriveConnectorService implements InitializingBean {
+public class GoogleDriveConnectorService {
 
     Logger logger = LoggerFactory.getLogger(GoogleDriveConnectorService.class);
 
@@ -37,16 +37,13 @@ public class GoogleDriveConnectorService implements InitializingBean {
     @Autowired
     private FilesListAsyncHelper filesListAsyncHelper;
 
-    @Autowired
-    private FileDownloadAsyncHelper fileDownloadAsyncHelper;
-
     /**
      *
      * this is the InitializingBean which runs before the cron job starts
      * it fetches the metadata of files already present in the folder
      * it also creates the output folder and files
      */
-    private void init() throws ExecutionException, InterruptedException {
+    protected void init() throws ExecutionException, InterruptedException {
         try {
             new File(StringUtils.join(outputFolder, "/", folderId)).mkdir();
             Files.createFile(Path.of(StringUtils.join(outputFolder, "/", folderId, "/", "events.json")));
@@ -55,14 +52,12 @@ public class GoogleDriveConnectorService implements InitializingBean {
         }
         StoreFilesMetadata.lastCheckTime = new Date();
         FilesResponse files = filesListAsyncHelper.getFiles(String.format("'%s' in parents", folderId)).get();
-        files.getFiles().forEach(file -> {
-            StoreFilesMetadata.filesInQueue.add(file);
-            if(StoreFilesMetadata.filesInQueue.size() == Integer.parseInt(eventsThreshold)) processEventsHelper.processEvents();
-        });
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        init();
+        if(files != null) {
+            files.getFiles().forEach(file -> {
+                StoreFilesMetadata.filesInQueue.add(file);
+                if (StoreFilesMetadata.filesInQueue.size() == Integer.parseInt(eventsThreshold))
+                    processEventsHelper.processEvents();
+            });
+        }
     }
 }
