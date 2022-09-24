@@ -40,6 +40,12 @@ public class GoogleDriveConnectorService implements InitializingBean {
     @Autowired
     private FileDownloadAsyncHelper fileDownloadAsyncHelper;
 
+    /**
+     *
+     * this is the InitializingBean which runs before the cron job starts
+     * it fetches the metadata of files already present in the folder
+     * it also creates the output folder and files
+     */
     private void init() throws ExecutionException, InterruptedException {
         try {
             new File(StringUtils.join(outputFolder, "/", folderId)).mkdir();

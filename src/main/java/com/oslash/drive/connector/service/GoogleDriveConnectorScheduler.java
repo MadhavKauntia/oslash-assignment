@@ -41,6 +41,12 @@ public class GoogleDriveConnectorScheduler {
     @Autowired
     private ProcessEventsHelper processEventsHelper;
 
+    /**
+     *
+     * scheduled cron job to check if new files have been added to the folder
+     * if new files have been added and the total number of events becomes equal to the threshold,
+     * the events are processed.
+     */
     @Scheduled(cron = "#{@getCronExpression}", zone = Constants.UTC)
     public void checkAndUpdateChanges() throws ExecutionException, InterruptedException {
         logger.info("Started cron job at {}", new Date());

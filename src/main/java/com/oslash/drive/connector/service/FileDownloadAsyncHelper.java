@@ -29,6 +29,13 @@ public class FileDownloadAsyncHelper {
     @Autowired
     private GoogleDriveClient googleDriveClient;
 
+    /**
+     *
+     * @param fileId - id of file to be downloaded
+     * @param fileTitle - this is the name as which the file will be saved
+     * @param fileMimeType - type of file to populate Accept header
+     * @param downloadPath - this is the folder to which the file will be downloaded
+     */
     @Async(Constants.SERVICE_TASK_EXECUTOR)
     protected CompletableFuture<Void> downloadFile(String fileId, String fileTitle, String fileMimeType, String downloadPath) {
         long startTime = System.currentTimeMillis();

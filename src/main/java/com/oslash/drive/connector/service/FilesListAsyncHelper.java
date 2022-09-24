@@ -25,6 +25,11 @@ public class FilesListAsyncHelper {
     @Autowired
     private GoogleDriveClient googleDriveClient;
 
+    /**
+     *
+     * @param query - query to call the Google Drive API
+     * @return list of files which satisfy the query
+     */
     @Async(Constants.SERVICE_TASK_EXECUTOR)
     protected CompletableFuture<FilesResponse> getFiles(String query) {
         long startTime = System.currentTimeMillis();

@@ -38,6 +38,11 @@ public class ProcessEventsHelper {
     private String folderId;
 
 
+    /**
+     * this function processes a batch of events
+     * processing a batch of events includes downloading all files (concurrently) and
+     * saving metadata to the events.json file in the output folder
+     */
     public void processEvents() {
         String jsonEventsFileAsString = null;
         String pathOfJsonFile = StringUtils.join(outputFolder, "/", folderId, "/", "events.json");
