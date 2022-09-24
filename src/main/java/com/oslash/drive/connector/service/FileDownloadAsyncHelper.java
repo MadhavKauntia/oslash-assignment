@@ -40,7 +40,7 @@ public class FileDownloadAsyncHelper {
             try(OutputStream os = new FileOutputStream(StringUtils.join(downloadPath, fileTitle))) {
                 response.body().asInputStream().transferTo(os);
                 os.flush();
-                logger.info("Successfully download file: {} to location: {} within {}ms", fileTitle, downloadPath, System.currentTimeMillis() - startTime);
+                logger.info("Successfully downloaded file: {} to location: {} within {}ms", fileTitle, downloadPath, System.currentTimeMillis() - startTime);
             } catch (FileNotFoundException e) {
                 logger.error("File not found while writing to file {}", downloadPath);
             } catch (IOException e) {

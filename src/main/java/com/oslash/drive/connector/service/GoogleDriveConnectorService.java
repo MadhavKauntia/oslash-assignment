@@ -3,19 +3,22 @@ package com.oslash.drive.connector.service;
 import com.google.common.collect.Lists;
 import com.oslash.drive.connector.models.FileMetadata;
 import com.oslash.drive.connector.models.FilesResponse;
+import com.oslash.drive.connector.models.StoreFilesMetadata;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-@Component
+@Service
 public class GoogleDriveConnectorService implements InitializingBean {
 
     Logger logger = LoggerFactory.getLogger(GoogleDriveConnectorService.class);
@@ -37,7 +40,8 @@ public class GoogleDriveConnectorService implements InitializingBean {
 
     private void init() throws ExecutionException, InterruptedException {
         // fetch list of files for the folder
-        FilesResponse files = filesListAsyncHelper.getFilesForFolder(folderId).get();
+        StoreFilesMetadata.lastCheckTime = new Date();
+        FilesResponse files = filesListAsyncHelper.getFiles(String.format("'%s' in parents", folderId)).get();
 
         // download files to output folder
         int batchSize;
@@ -48,11 +52,12 @@ public class GoogleDriveConnectorService implements InitializingBean {
         }
         for(List<FileMetadata> filesBatch : Lists.partition(files.getFiles(), batchSize)) {
             List<CompletableFuture<Void>> parallelDownloads = new ArrayList<>();
-            filesBatch.forEach(file -> parallelDownloads.add(fileDownloadAsyncHelper.downloadFile(file.getId(), file.getOriginalFilename(), file.getMimeType(), StringUtils.join(outputFolder, folderId, "/"))));
+            filesBatch.forEach(file -> {
+                StoreFilesMetadata.storedFiles.add(file.getId());
+                parallelDownloads.add(fileDownloadAsyncHelper.downloadFile(file.getId(), file.getOriginalFilename(), file.getMimeType(), StringUtils.join(outputFolder, folderId, "/")));
+            });
             parallelDownloads.forEach(CompletableFuture::join);
         }
-
-        // initiate cron
 
     }
 

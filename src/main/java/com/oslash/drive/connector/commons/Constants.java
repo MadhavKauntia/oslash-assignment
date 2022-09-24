@@ -8,4 +8,6 @@ public class Constants {
     public static final String HEADER_ACCEPT = "Accept";
     public static final String BACKGROUND_THREAD_PREFIX = "bgThread-";
     public static final String SERVICE_TASK_EXECUTOR = "serviceTaskExecutor";
+    public static final String DEFAULT_CRON_EXPRESSION = "0 0/30 * * * *";
+    public static final String UTC = "UTC";
 }
